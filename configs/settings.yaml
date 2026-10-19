@@ -1,0 +1,34 @@
+# ============ 全局配置（骨架模板，具体值由你按环境填写）============
+
+app:
+  name: enterprise-rag-agent
+  debug: true
+
+paths:
+  raw_docs: data/raw_docs          # 原始文档
+  processed: data/processed        # 清洗后中间文本
+  index: data/index                # FAISS / BM25 索引落盘
+  evaluation: data/evaluation      # 评测集
+
+models:
+  llm_api: deepseek                # 生成：DeepSeek API（OpenAI 兼容）
+  llm_model: deepseek-chat         # 生成模型
+  embedding_model: BAAI/bge-m3     # 本地 Embedding（sentence-transformers 加载）
+  rerank_model: BAAI/bge-reranker-v2-m3   # 本地 Rerank（FlagEmbedding 加载）
+
+chunking:
+  chunk_size: 512                  # 待评测定标
+  chunk_overlap: 64                # 待评测定标
+
+retrieval:
+  top_k: 20                        # 双路召回候选数
+  rerank_top_k: 5                  # 重排后保留数
+  relevance_threshold: 0.5         # 相关性阈值，评测集定标
+
+security:
+  departments: ["研发", "人力", "财务"]   # 示例，按需调整
+  security_levels: ["普通", "机密"]
+
+audit:
+  log_dir: logs
+  enabled: true

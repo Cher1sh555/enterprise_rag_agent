@@ -1,0 +1,1 @@
+"""配置加载与校验：读取 configs/settings.yaml 与 .env。"""

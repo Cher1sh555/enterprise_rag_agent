@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 密钥与本地配置
+.env
+
+# 中间产物与日志
+data/processed/
+data/index/
+logs/
+
+# IDE
+.idea/
+.vscode/

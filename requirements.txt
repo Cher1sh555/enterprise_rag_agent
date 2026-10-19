@@ -1,0 +1,22 @@
+# ---- 框架与核心 ----
+langchain
+langchain-community
+langchain-openai      # DeepSeek API（OpenAI 兼容协议）接入
+langgraph
+faiss-cpu
+rank-bm25
+
+# ---- 向量化 / 重排（本地开源模型）----
+sentence-transformers
+FlagEmbedding
+
+# ---- 文档解析 ----
+pypdf
+python-docx
+
+# ---- 前端 ----
+streamlit
+
+# ---- 配置与工具 ----
+pyyaml
+python-dotenv
