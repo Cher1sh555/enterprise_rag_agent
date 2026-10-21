@@ -1,0 +1,70 @@
+# ============================================================
+# 项目元数据 + 依赖 + 工具配置
+#
+# 关键作用：让 `pip install -e .` 把项目注册为可编辑包，
+# 从而在任意目录都能 `import src.xxx`（scripts / tests / streamlit 三处共用）。
+# ============================================================
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "enterprise-rag-agent"
+version = "0.1.0"
+description = "企业内部知识库 RAG 智能问答 Agent"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    # ---- 框架与编排 ----
+    "langchain>=1.0",
+    "langchain-community",
+    "langchain-openai",
+    "langgraph>=1.0",
+    # ---- 配置校验（阶段 2 使用）----
+    "pydantic>=2",
+    "pydantic-settings>=2",
+    # ---- 检索 ----
+    "faiss-cpu",
+    "rank-bm25",
+    "jieba",              # 中文 BM25 必须分词，rank-bm25 不会替你切词
+    # ---- 向量化 / 重排（本地开源模型）----
+    "torch",
+    "sentence-transformers",
+    "FlagEmbedding",
+    # ---- 文档解析 ----
+    "pypdf",
+    "python-docx",
+    # ---- 前端 ----
+    "streamlit",
+    # ---- 配置与工具 ----
+    "pyyaml",
+    "python-dotenv",
+    "tenacity",           # 阶段 7 的指数退避重试
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+# ------------------------------------------------------------
+# 打包：只收 src/ 下的包，tests/ 和 scripts/ 不打包
+# 用通配符而非手写清单，以后新增子包（src/evaluation 等）不用改这里
+# ------------------------------------------------------------
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+# ------------------------------------------------------------
+# pytest：pythonpath 兜底，即使没执行 pip install -e . 也能 import src
+# ------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: 需要加载真实模型的用例",
+    "integration: 需要真实语料的端到端用例",
+]

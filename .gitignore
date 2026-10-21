@@ -12,6 +12,17 @@ data/processed/
 data/index/
 logs/
 
+# 测试与安装临时目录
+.pytest-tmp/
+.pytest_cache/
+pytest-of-*/
+.tmp/
+*.egg-info/
+
+# 构建/打包产物
+build/
+dist/
+
 # IDE
 .idea/
 .vscode/

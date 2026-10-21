@@ -32,3 +32,14 @@ security:
 audit:
   log_dir: logs
   enabled: true
+
+ingest:
+  scan_threshold_chars_per_page: 50   # 每页可见字符低于此值 -> 视为扫描件，走 OCR
+  render_dpi: 200                     # 渲染分辨率，200~300；越高越准越慢
+  ocr_lang: ch                        # PaddleOCR 语言，中文用 ch
+  ocr_use_gpu: false
+  ocr_min_confidence: 0.5             # 页均置信度低于此值 -> 标记 low_confidence
+  max_pages: null                     # 单文档最多解析页数，null=不限
+  unknown_department: "未知"
+  default_sensitivity: null           # null -> 取 security.security_levels 最后一档（最严格）
+  supported_extensions: [".pdf", ".docx", ".txt", ".md"]
