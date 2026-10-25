@@ -42,4 +42,6 @@ ingest:
   max_pages: null                     # 单文档最多解析页数，null=不限
   unknown_department: "未知"
   default_sensitivity: null           # null -> 取 security.security_levels 最后一档（最严格）
-  supported_extensions: [".pdf", ".docx", ".txt", ".md"]
+  supported_extensions: [".docx", ".txt", ".md"]
+
+

@@ -41,3 +41,38 @@ def isolated_log_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """把日志目录临时指到 tmp_path，避免测试污染真实 logs/。"""
     monkeypatch.setenv("LOG_DIR", str(tmp_path))
     return tmp_path
+
+
+# tests/conftest.py 追加（放在文件末尾）
+from src.config import PathConfig, Settings, load_settings
+
+
+@pytest.fixture(scope="session")
+def base_settings() -> Settings:
+    """真实配置只读一次。
+
+    为什么不手写一份 Settings(...) 全量构造：它有 27 个字段，你以后每加一个
+    字段就得同步改 fixture，改漏了测试全红。用真实 yaml 才是单一真相源，
+    yaml 的形状由 test_smoke 单独守（那条契约测试就该干这个）。
+    """
+    return load_settings()
+
+
+@pytest.fixture()
+def settings(base_settings: Settings, tmp_path: Path) -> Settings:
+    """把四条路径全部重定向到 tmp_path，并把 embedding 固定成 hash。"""
+    paths = PathConfig(
+        raw_docs=tmp_path / "raw_docs",
+        processed=tmp_path / "processed",
+        index=tmp_path / "index",
+        evaluation=tmp_path / "evaluation",
+    )
+    for path in (paths.raw_docs, paths.processed, paths.index, paths.evaluation):
+        path.mkdir(parents=True, exist_ok=True)      # iter_documents 要求目录存在
+
+    return base_settings.model_copy(
+        update={
+            "paths": paths,
+            "models": base_settings.models.model_copy(update={"embedding_model": "hash"}),
+        }
+    )

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal  #类型注解工具：**限定变量只能是给定的几个固定字面量之中的一个**
 
-kind = Literal("text","table")  #`Literal["a","b"]`：**只能是这几个固定字符串**
+Kind = Literal["text", "table"]  #`Literal["a","b"]`：**只能是这几个固定字符串**
 
 @dataclass(frozen=True)
 class Page:
@@ -48,4 +48,17 @@ class Chunk:
     sensitivity: str             # ④ 用
     ocr_used: bool               # ④ 用（识别质量提示）
     low_confidence: bool
+
+@dataclass(frozen=True)
+class DocMeta:
+    doc_id: str
+    department: str
+    sensitivity: str
+    labels_source: str          # "path" | "default"
+
+@dataclass(frozen=True)
+class ScoredChunk:
+    chunk: Chunk
+    score: float
+    sources: tuple[str, ...]    # ("vector",) / ("bm25",) / ("vector","bm25")
 
