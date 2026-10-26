@@ -23,10 +23,14 @@ chunking:
 retrieval:
   top_k: 20                        # 双路召回候选数
   rerank_top_k: 5                  # 重排后保留数
-  relevance_threshold: 0.5         # 相关性阈值，评测集定标
+  # M3 定标（30 条评测集，lexical rerank）：
+  #   boundary 最高分 0.443，normal 有 2 条落在 0.20~0.43（疑问词拉低覆盖率）
+  #   0.50 -> 误拒率 0.40；0.45 -> 误拒率 0.20 且 boundary 仍 100% 拒答
+  relevance_threshold: 0.45        # 换 reranker 必须重新定标
 
 security:
-  departments: ["研发", "人力", "财务"]   # 示例，按需调整
+  # 目录约定：data/raw_docs/{部门}/{密级}/xxx.md（两级都必须命中白名单，否则 fail-closed）
+  departments: ["研发", "人力", "财务", "公共"]
   security_levels: ["普通", "机密"]
 
 audit:

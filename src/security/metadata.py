@@ -1,8 +1,16 @@
 """部门 / 密级标签规范与校验。
 
-v0 打标只做路径约定：raw_docs/{部门}/xxx.md -> department = 部门。
-标不上就退回 unknown_department + 最严格密级（fail-closed），
-并把来源记成 labels_source="default"，方便 build_index 统计打标覆盖率。
+v0.2 起改为**两级目录**约定（M3 需要"有对比"的密级）：
+
+    data/raw_docs/{部门}/{密级}/xxx.md
+
+- 部门必须命中 settings.security.departments；
+- 密级必须命中 settings.security.security_levels；
+- 任一层对不上 → 整体退回 unknown_department + 最严格密级（fail-closed），
+  并把 labels_source 记成 "default"，由 build_index 统计覆盖率。
+
+为什么不做"只认部门、密级靠默认"：那样全库都是同一个密级，
+权限隔离既测不出来、也讲不清楚（要么全开要么全关）。
 """
 
 from __future__ import annotations
@@ -23,32 +31,43 @@ def doc_id_for(rel_path: str) -> str:
 
 
 def resolve_doc_meta(rel_path: str, settings: Settings) -> DocMeta:
-    department = _department_from_path(rel_path, settings)
+    labels = labels_from_path(rel_path, settings)
+    department, sensitivity = labels or (
+        settings.ingest.unknown_department,
+        settings.default_sensitivity,
+    )
     return DocMeta(
         doc_id=doc_id_for(rel_path),
         department=department,
-        sensitivity=settings.default_sensitivity,
-        labels_source="path" if department != settings.ingest.unknown_department else "default",
+        sensitivity=sensitivity,
+        labels_source="path" if labels else "default",
     )
 
 
-def _department_from_path(rel_path: str, settings: Settings) -> str:
-    """raw_docs 下第一层目录名若命中部门白名单，就采信。"""
+def labels_from_path(rel_path: str, settings: Settings) -> tuple[str, str] | None:
+    """从 {部门}/{密级}/file 解析标签；任一层不合法返回 None。"""
     relative = _relative_to_raw(rel_path, settings)
     if relative is None:
-        return settings.ingest.unknown_department
+        return None
 
     parts = relative.parts
-    if len(parts) > 1 and parts[0] in settings.security.departments:
-        return parts[0]
-    return settings.ingest.unknown_department
+    if len(parts) < 3:                      # 至少 部门/密级/文件
+        return None
+
+    department, sensitivity = parts[0], parts[1]
+    if (
+        department in settings.security.departments
+        and sensitivity in settings.security.security_levels
+    ):
+        return department, sensitivity
+    return None
 
 
 def _relative_to_raw(rel_path: str, settings: Settings) -> Path | None:
     """把 rel_path 还原成"相对 raw_docs 的路径"。
 
     兼容两种输入：
-    - 项目根相对（生产：data/raw_docs/研发/制度.md）；
+    - 项目根相对（生产：data/raw_docs/研发/普通/制度.md）；
     - 绝对路径（raw_docs 挂在项目根之外，例如测试的 tmp_path、容器卷挂载）。
     两者都还原不了就返回 None，由调用方走 fail-closed 兜底。
     """

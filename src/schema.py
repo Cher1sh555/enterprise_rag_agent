@@ -56,9 +56,17 @@ class DocMeta:
     sensitivity: str
     labels_source: str          # "path" | "default"
 
+
+@dataclass(frozen=True)
+class User:
+    user_id: str
+    department: str
+    level: str                  # 必须命中 settings.security.security_levels
+
 @dataclass(frozen=True)
 class ScoredChunk:
     chunk: Chunk
-    score: float
+    score: float                # RRF 融合分（0.016~0.033 量级，不是相关度）
     sources: tuple[str, ...]    # ("vector",) / ("bm25",) / ("vector","bm25")
+    rerank_score: float | None = None   # cross-encoder / 词覆盖率重排分，0~1
 

@@ -88,6 +88,25 @@ def test_chunk_ids_stable_and_formatted(small):
     assert [c.seq for c in first] == list(range(1, len(first) + 1))
 
 
+def test_small_tail_is_merged_into_previous_chunk(small):
+    """尾块 < size*0.3 时并入前一块，避免碎块污染召回。"""
+    body, tail = "甲" * 90, "乙" * 20
+    chunks = split_document(_clean([body, tail]), META, small)
+
+    assert len(chunks) == 1
+    assert body in chunks[0].text and tail in chunks[0].text
+    assert 100 < chunks[0].char_len <= 115      # 允许上浮到 size*1.15
+
+
+def test_tail_merge_respects_cap(small):
+    """合并后会超过 size*1.15 则不合并，保留两块。"""
+    body, tail = "甲" * 100, "乙" * 20
+    chunks = split_document(_clean([body, tail]), META, small)
+
+    assert len(chunks) == 2
+    assert chunks[-1].char_len == 20
+
+
 def test_metadata_inherited(small):
     chunk = split_document(_clean(["正文"]), META, small)[0]
 

@@ -1,6 +1,6 @@
 """indexer 契约：四文件落盘 + 对齐不变量 + 可加载可检索。
 
-落盘约定（chunks.jsonl / tokens.jsonl / faiss.index / meta.json），
+落盘约定（chunks.jsonl / tokens.jsonl / vectors.npy / meta.json），
 不变量：len(chunks) == len(tokens) == faiss.ntotal。
 这一条断了，检索会把 A 的分数安到 B 头上，而且不报错。
 """
@@ -51,7 +51,8 @@ def vectors(chunks) -> np.ndarray:
 def test_roundtrip(tmp_path, chunks, vectors):
     build_index(chunks, vectors, tmp_path, META)
 
-    for name in ("chunks.jsonl", "tokens.jsonl", "faiss.index", "meta.json"):
+    # 向量存 .npy 而不是 faiss.index：faiss 的 C++ IO 在含中文的 Windows 路径上会 fopen 失败
+    for name in ("chunks.jsonl", "tokens.jsonl", "vectors.npy", "meta.json"):
         assert (tmp_path / name).is_file(), f"缺少落盘文件 {name}"
 
     bundle = load_index(tmp_path)

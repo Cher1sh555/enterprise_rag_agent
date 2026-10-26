@@ -71,12 +71,23 @@ def test_labels_from_default_counted(settings):
     assert report.labels_from_default == report.chunks
 
 
-def test_department_inherited_from_path(settings):
-    """放在 研发/ 下 -> 部门=研发，且不计入兜底。"""
-    _write(settings.paths.raw_docs / "研发" / "制度.md", "正文")
+def test_labels_inherited_from_two_level_path(settings):
+    """两级目录 研发/普通/ -> 部门与密级都来自路径，不计入兜底。"""
+    _write(settings.paths.raw_docs / "研发" / "普通" / "制度.md", "正文")
 
     report = run_ingest(settings)
     bundle = load_index(settings.paths.index)
 
     assert report.labels_from_default == 0
-    assert {c.department for c in bundle.chunks} == {"研发"}
+    assert {(c.department, c.sensitivity) for c in bundle.chunks} == {("研发", "普通")}
+
+
+def test_incomplete_path_falls_back_to_default(settings):
+    """只有部门层、没有密级层 -> 整体 fail-closed（未知 + 最严格密级）。"""
+    _write(settings.paths.raw_docs / "研发" / "制度.md", "正文")
+
+    report = run_ingest(settings)
+    bundle = load_index(settings.paths.index)
+
+    assert report.labels_from_default == report.chunks > 0
+    assert {(c.department, c.sensitivity) for c in bundle.chunks} == {("未知", "机密")}

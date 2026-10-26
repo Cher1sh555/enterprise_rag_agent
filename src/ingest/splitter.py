@@ -1,10 +1,19 @@
-"""递归字符分块 + 重叠窗口 + 表格独立策略。"""
+"""递归字符分块 + 重叠窗口 + 表格独立策略。
+
+两条刻意保留的取舍：
+1. 段落贪心打包，**打包阶段不重复内容**；只有单段超长时才按 overlap 滑动切。
+2. 尾块小于 size*0.3 时并入前一块（前块允许上浮到 size*1.15）——
+   80 字的碎块 embedding 质量差、召回噪声大，宁可变长一点也不留碎块。
+"""
 from __future__ import annotations
 
 from collections.abc import Sequence
 
 from src.config import Settings
 from src.schema import Block, Chunk, CleanDoc, DocMeta
+
+TAIL_MERGE_FLOOR = 0.3      # 尾块小于 size*0.3 视为碎块
+TAIL_MERGE_CAP = 1.15       # 合并后允许达到 size*1.15
 
 def split_document(doc: CleanDoc, meta: DocMeta, settings: Settings) -> list[Chunk]:
     size = settings.chunking.chunk_size
@@ -46,7 +55,21 @@ def _pack(blocks: Sequence[Block], size: int, overlap: int) -> list[tuple[str, i
                 buf, buf_page = piece, block.page_no
     if buf.strip():
         packed.append((buf, buf_page))
-    return packed
+    return _merge_small_tail(packed, size)
+
+
+def _merge_small_tail(packed: list[tuple[str, int]], size: int) -> list[tuple[str, int]]:
+    """尾块小于 size*0.3 就并入前一块；合并后超 size*1.15 则原样返回。"""
+    if len(packed) < 2 or len(packed[-1][0]) >= size * TAIL_MERGE_FLOOR:
+        return packed
+
+    tail_text, tail_page = packed[-1]
+    prev_text, prev_page = packed[-2]
+    merged = f"{prev_text}\n{tail_text}"
+    if len(merged) > size * TAIL_MERGE_CAP:
+        return packed
+
+    return [*packed[:-2], (merged, prev_page)]
 
 
 def _split_long(text: str, size: int, overlap: int) -> list[str]:

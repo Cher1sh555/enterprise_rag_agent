@@ -24,20 +24,14 @@ class PathConfig(BaseModel):
     index: Path
     evaluation: Path
 
-    class PathConfig(BaseModel):
-        raw_docs: Path
-        processed: Path
-        index: Path
-        evaluation: Path
-
-        @model_validator(mode="after")
-        def _absolutize(self) -> PathConfig:
-            """相对路径一律相对项目根解析，不随 cwd 漂移。"""
-            for name in ("raw_docs", "processed", "index", "evaluation"):
-                value = getattr(self, name)
-                if not value.is_absolute():
-                    setattr(self, name, project_root() / value)
-            return self
+    @model_validator(mode="after")
+    def _absolutize(self) -> PathConfig:
+        """相对路径一律相对项目根解析，不随 cwd 漂移。"""
+        for name in ("raw_docs", "processed", "index", "evaluation"):
+            value = getattr(self, name)
+            if not value.is_absolute():
+                setattr(self, name, project_root() / value)
+        return self
 
 class ModelsConfig(BaseModel):
     llm_api: str

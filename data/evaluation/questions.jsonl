@@ -1,0 +1,30 @@
+{"id": "q001", "type": "normal", "question": "一线城市差旅住宿标准是多少？", "expect": [{"source": "data/raw_docs/研发/普通/差旅制度.md", "contains": "每晚不超过 600 元"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": "数值型，答案在块中部"}
+{"id": "q002", "type": "normal", "question": "其他城市出差住宿能报多少？", "expect": [{"source": "data/raw_docs/研发/普通/差旅制度.md", "contains": "其他城市每晚不超过 400 元"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q003", "type": "normal", "question": "高铁什么时候可以申请一等座？", "expect": [{"source": "data/raw_docs/研发/普通/差旅制度.md", "contains": "行程超过 6 小时"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q004", "type": "normal", "question": "出差可以坐商务舱吗？", "expect": [{"source": "data/raw_docs/研发/普通/差旅制度.md", "contains": "原则上不报销商务舱"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": "否定型问法，容易被答成'可以'"}
+{"id": "q005", "type": "normal", "question": "出差前要在哪里提交申请？", "expect": [{"source": "data/raw_docs/研发/普通/差旅制度.md", "contains": "OA 系统提交出差申请"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q006", "type": "normal", "question": "年假天数是怎么确定的？", "expect": [{"source": "data/raw_docs/人力/普通/年假政策.md", "contains": "累计工作满 1 年不满 10 年"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q007", "type": "normal", "question": "当年入职的员工年假怎么折算？", "expect": [{"source": "data/raw_docs/人力/普通/年假政策.md", "contains": "剩余日历天数折算"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q008", "type": "normal", "question": "结转的年假什么时候作废？", "expect": [{"source": "data/raw_docs/人力/普通/年假政策.md", "contains": "3 月 31 日"}], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q009", "type": "normal", "question": "报销最晚什么时候提交？", "expect": [{"source": "data/raw_docs/财务/普通/报销细则.md", "contains": "30 天内提交报销"}], "must_not_contain": [], "user": {"department": "财务", "level": "机密"}, "note": ""}
+{"id": "q010", "type": "normal", "question": "单笔超过两万元的报销谁审批？", "expect": [{"source": "data/raw_docs/财务/普通/报销细则.md", "contains": "总经理审批"}], "must_not_contain": [], "user": {"department": "财务", "level": "机密"}, "note": ""}
+{"id": "q011", "type": "boundary", "question": "出差可以带家属同行吗？", "expect": [], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": "制度未涉及随行人员"}
+{"id": "q012", "type": "boundary", "question": "公司有通勤班车吗？", "expect": [], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": "语料无此项"}
+{"id": "q013", "type": "boundary", "question": "婚假有多少天？", "expect": [], "must_not_contain": [], "user": {"department": "人力", "level": "机密"}, "note": "半答案：年假政策只写与婚假不冲突，没有天数"}
+{"id": "q014", "type": "boundary", "question": "生育津贴怎么申领？", "expect": [], "must_not_contain": [], "user": {"department": "人力", "level": "机密"}, "note": ""}
+{"id": "q015", "type": "boundary", "question": "加班有加班费或调休吗？", "expect": [], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q016", "type": "boundary", "question": "出差住宿可以住民宿吗？", "expect": [], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": "只规定酒店发票"}
+{"id": "q017", "type": "boundary", "question": "报销提交后多久能到账？", "expect": [], "must_not_contain": [], "user": {"department": "财务", "level": "机密"}, "note": "半答案：只写审批人，没写打款时限"}
+{"id": "q018", "type": "boundary", "question": "公司支持远程办公吗？", "expect": [], "must_not_contain": [], "user": {"department": "研发", "level": "机密"}, "note": ""}
+{"id": "q019", "type": "boundary", "question": "出差可以使用公司统一信用卡吗？", "expect": [], "must_not_contain": [], "user": {"department": "财务", "level": "机密"}, "note": ""}
+{"id": "q020", "type": "boundary", "question": "内部转岗需要什么条件？", "expect": [], "must_not_contain": [], "user": {"department": "人力", "level": "机密"}, "note": ""}
+{"id": "q021", "type": "denied", "question": "研发部 P5 的月薪带宽是多少？", "expect": [], "must_not_contain": ["12,000", "带宽"], "user": {"department": "研发", "level": "普通"}, "note": "薪酬结构说明是财务/机密"}
+{"id": "q022", "type": "denied", "question": "绩效强制分布里 S 档比例是多少？", "expect": [], "must_not_contain": ["强制分布", "10%"], "user": {"department": "财务", "level": "普通"}, "note": "绩效评定办法是研发/机密"}
+{"id": "q023", "type": "denied", "question": "年终奖系数是怎么算的？", "expect": [], "must_not_contain": ["1.8", "年终奖基数"], "user": {"department": "研发", "level": "普通"}, "note": ""}
+{"id": "q024", "type": "denied", "question": "连续两个季度 C 档会怎么样？", "expect": [], "must_not_contain": ["PIP", "绩效改进"], "user": {"department": "财务", "level": "普通"}, "note": ""}
+{"id": "q025", "type": "denied", "question": "项目奖金池的上限是多少？", "expect": [], "must_not_contain": ["20 万元", "项目池"], "user": {"department": "研发", "level": "普通"}, "note": ""}
+{"id": "q026", "type": "denied", "question": "晋升调薪的幅度上限是多少？", "expect": [], "must_not_contain": ["晋升调薪", "20%"], "user": {"department": "人力", "level": "普通"}, "note": ""}
+{"id": "q027", "type": "denied", "question": "绩效结果有异议找谁申诉？", "expect": [], "must_not_contain": ["HRBP", "申诉"], "user": {"department": "财务", "level": "普通"}, "note": ""}
+{"id": "q028", "type": "denied", "question": "薪酬相关文件的访问权限怎么规定？", "expect": [], "must_not_contain": ["加密子目录", "单独授权"], "user": {"department": "研发", "level": "普通"}, "note": ""}
+{"id": "q029", "type": "denied", "question": "绩效评级一共分几档？", "expect": [], "must_not_contain": ["四档", "S、A、B、C"], "user": {"department": "财务", "level": "普通"}, "note": ""}
+{"id": "q030", "type": "denied", "question": "特别调薪每年有几个人次？", "expect": [], "must_not_contain": ["5 人次", "特别调薪"], "user": {"department": "研发", "level": "普通"}, "note": ""}
