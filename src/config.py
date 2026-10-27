@@ -38,6 +38,7 @@ class ModelsConfig(BaseModel):
     llm_model: str
     embedding_model: str
     rerank_model: str
+    fallback_model: str | None = None   # 主模型限流/超时时降级用；None = 不降级
 
 
 class ChunkingConfig(BaseModel):

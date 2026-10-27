@@ -1,18 +1,3 @@
-"""部门 / 密级标签规范与校验。
-
-v0.2 起改为**两级目录**约定（M3 需要"有对比"的密级）：
-
-    data/raw_docs/{部门}/{密级}/xxx.md
-
-- 部门必须命中 settings.security.departments；
-- 密级必须命中 settings.security.security_levels；
-- 任一层对不上 → 整体退回 unknown_department + 最严格密级（fail-closed），
-  并把 labels_source 记成 "default"，由 build_index 统计覆盖率。
-
-为什么不做"只认部门、密级靠默认"：那样全库都是同一个密级，
-权限隔离既测不出来、也讲不清楚（要么全开要么全关）。
-"""
-
 from __future__ import annotations
 
 import hashlib

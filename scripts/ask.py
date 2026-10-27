@@ -47,10 +47,19 @@ def main() -> int:
         default="lexical",
         help="lexical=词覆盖率（离线）；flag=cross-encoder（需下载模型）；none=不重排",
     )
+    parser.add_argument(
+        "--graph", action="store_true", help="走 Agent 图（默认是等价的直线实现）"
+    )
+    parser.add_argument(
+        "--thread", default=None, help="会话 id，用于多轮；默认每次随机（不复用历史）"
+    )
     args = parser.parse_args()
 
     settings = get_settings()
     user = parse_user(args.user)
+
+    if args.graph:
+        return _run_graph(args.question, user, args.thread)
 
     try:
         bundle = load_index(settings.paths.index)
@@ -144,6 +153,25 @@ def _audit(settings, user, question, evidence, decision, latency_ms, answer) -> 
         },
         settings,
     )
+
+
+def _run_graph(question: str, user: User, thread: str | None) -> int:
+    """走 Agent 图。证据/判定/生成都在图里完成，这里只负责展示。"""
+    from src.agent.graph import run as run_graph
+
+    state = run_graph(question, user, thread_id=thread)
+    evidence = state.get("evidence") or []
+    by_id = {item["chunk_id"]: item for item in evidence}
+
+    print(
+        f"[图] intent={state.get('intent')} reason={state.get('reason')} "
+        f"latency={state.get('latency_ms')}ms degraded={state.get('degraded', False)}"
+    )
+    for rank, chunk_id in enumerate(state.get("citations") or [], start=1):
+        item = by_id.get(chunk_id, {})
+        print(f"  [{rank}] {chunk_id}  {item.get('source', '?')} p.{item.get('page_no', '?')}")
+    print(f"\n[回答] {state.get('answer')}")
+    return 0
 
 
 if __name__ == "__main__":
