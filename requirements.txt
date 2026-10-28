@@ -1,14 +1,17 @@
-# ---- 框架与核心 ----
+# 运行依赖（最小可运行集）：pip install -r requirements.txt
+# 「真实向量 / 真 cross-encoder」才需要的重依赖放在文件底部，默认不装。
+
+# ---- 框架与编排 ----
 langchain
 langchain-community
 langchain-openai      # DeepSeek API（OpenAI 兼容协议）接入
 langgraph
+
+# ---- 检索 ----
 faiss-cpu
 rank-bm25
-
-# ---- 向量化 / 重排（本地开源模型）----
-sentence-transformers
-FlagEmbedding
+jieba                 # 中文 BM25 必须分词
+numpy
 
 # ---- 文档解析 ----
 pypdf
@@ -17,6 +20,15 @@ python-docx
 # ---- 前端 ----
 streamlit
 
-# ---- 配置与工具 ----
+# ---- 配置 / 工具 ----
+pydantic>=2
+pydantic-settings>=2
 pyyaml
 python-dotenv
+tenacity              # 指数退避重试
+
+# ---- 可选重依赖（默认不需要：建索引时加 --hash-embed 即可完全离线）----
+# 只有要用真实向量 / 真 cross-encoder 时才装：
+# sentence-transformers   # BAAI/bge-m3 等本地 embedding
+# FlagEmbedding           # BAAI/bge-reranker-v2-m3 等 cross-encoder
+# torch                   # 上面两者的运行时

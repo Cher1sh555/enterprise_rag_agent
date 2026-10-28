@@ -1,1 +1,26 @@
-# 应用 + PGVector 编排（骨架占位，部署环节补充）
+# 单服务编排：Streamlit 应用 + 数据/日志卷挂载（FAISS 是本地文件索引，不需要独立向量库）
+#
+# 首次使用：
+#   docker compose build
+#   docker compose run --rm app python scripts/build_index.py --hash-embed
+#   docker compose up -d
+#   # 打开 http://127.0.0.1:8501
+#
+# LLM_API_KEY 不必写进镜像：用 .env（env_file）或平台环境变量注入。
+
+services:
+  app:
+    build: .
+    image: enterprise-rag-agent:latest
+    container_name: rag-app
+    env_file:
+      - .env
+    environment:
+      LOG_DIR: /app/logs
+    ports:
+      - "8501:8501"
+    volumes:
+      # 语料 + 索引 + 清洗产物持久化（索引可重建，语料不可丢）
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped

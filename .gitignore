@@ -3,26 +3,39 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+*.egg-info/
 
 # 密钥与本地配置
 .env
+.streamlit/secrets.toml
 
-# 中间产物与日志
+# 中间产物与日志（可用 scripts/ 重新生成）
 data/processed/
 data/index/
+data/evaluation/report-*.json
+data/evaluation/scores-*.jsonl
 logs/
+
+# 分词缓存（jieba 首次运行在 cwd 生成，约 9MB）
+jieba.cache
 
 # 测试与安装临时目录
 .pytest-tmp/
 .pytest_cache/
 pytest-of-*/
 .tmp/
-*.egg-info/
+.tmp*/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # 构建/打包产物
 build/
 dist/
 
-# IDE
+# IDE 与系统
 .idea/
 .vscode/
+.DS_Store
+Thumbs.db

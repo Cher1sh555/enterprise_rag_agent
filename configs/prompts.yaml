@@ -1,2 +1,12 @@
-# 各节点 Prompt 模板（骨架占位）
-# 后续按节点补充：意图识别 / 生成回答 / 拒答话术 / 工具选择
+# Prompt 模板
+#
+# 现状（v0.5）：系统提示词统一写在 src/llm/client.py 的 _SYSTEM_PROMPT 常量里。
+# 为什么还没挪到这里：v0 只有一条生成链路，抽成配置文件的收益小于"多一层间接"的成本。
+#
+# v1 计划拆成四个键，由 src/llm/client.py 读取：
+#   intent:      意图路由（knowledge / tool）
+#   generate:    带 <doc> 的问答提示
+#   refuse:      拒答话术（no_result / low_score / forbidden / citation_out_of_scope）
+#   tool_select: 工具选择说明
+#
+# 拆分时的验收标准：改 prompt 不需要动 Python 代码，且 tests/test_graph.py 仍然全绿。
